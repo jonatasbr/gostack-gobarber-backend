@@ -1,13 +1,13 @@
-import { Op } from 'sequelize';
 import {
   startOfDay,
   endOfDay,
   setHours,
   setMinutes,
   setSeconds,
+  format,
   isAfter,
 } from 'date-fns';
-import { format } from 'url';
+import { Op } from 'sequelize';
 import Appointment from '../models/Appointment';
 
 class AvailableController {
@@ -42,13 +42,17 @@ class AvailableController {
       '16:00',
       '17:00',
       '18:00',
+      '19:00',
+      '20:00',
     ];
-    const available = schedule.map(time => {
+
+    const avaiable = schedule.map(time => {
       const [hour, minute] = time.split(':');
       const value = setSeconds(
         setMinutes(setHours(searchDate, hour), minute),
         0
       );
+
       return {
         time,
         value: format(value, "yyyy-MM-dd'T'HH:mm:ssxxx"),
@@ -57,7 +61,8 @@ class AvailableController {
           !appointments.find(a => format(a.date, 'HH:mm') === time),
       };
     });
-    return res.json(available);
+
+    return res.json(avaiable);
   }
 }
 
